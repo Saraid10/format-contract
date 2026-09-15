@@ -32,8 +32,8 @@ Two blind predictions failed. Both failures are on the page, one of them as the 
 **5 held · 2 failed · 2 unresolved for want of a credential.**
 
 The two unresolved hypotheses need speech-to-text and a vision model. Rather than quietly
-dropping them, they report as `INCONCLUSIVE` with the reason, and the measurements are written
-and waiting.
+dropping them, they report as `INCONCLUSIVE` with the reason. Both measurements are
+implemented — see *Running it* — and close when a key is supplied.
 
 ## Running it
 
@@ -102,10 +102,12 @@ pipeline/
   fetch.py         cached, rate-limited retrieval
   parse.py         page -> launch record
   video.py         ffmpeg measurement: duration, fps, cuts, shot lengths
+  groq.py          stdlib client for speech-to-text and vision (optional)
+  enrich.py        produce transcripts.json / vision.json for H4 and H6
   analyze.py       close each hypothesis, with its evidence
   __main__.py      orchestration -> site/data.json
 site/              static page; no server, no build step, no dependencies
-tests/             72 tests
+tests/             82 tests
 ```
 
 ## What this does not claim
