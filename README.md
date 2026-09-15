@@ -46,6 +46,17 @@ The first run makes one polite pass over nine public pages and downloads seven v
 everything to `data/`. Every run after that is offline and deterministic. `ffmpeg` arrives as a
 static binary with `imageio-ffmpeg`, so nothing needs installing system-wide.
 
+Two hypotheses (H4, H6) need a speech and a vision model. With a free Groq key:
+
+```bash
+export GROQ_API_KEY=...        # never committed; read from the environment only
+python -m pipeline.enrich      # writes data/transcripts.json and data/vision.json
+python -m pipeline             # re-closes every hypothesis
+```
+
+Without the key `enrich` exits cleanly and changes nothing — those two stay `INCONCLUSIVE`,
+which is a legitimate outcome rather than a failure.
+
 View the result:
 
 ```bash
@@ -61,7 +72,7 @@ python -m http.server 8777 --directory site
 python -m pytest
 ```
 
-72 tests over the parsers, the metric arithmetic, and every hypothesis verdict. They exist
+82 tests over the parsers, the metric arithmetic, and every hypothesis verdict. They exist
 because two of them caught real bugs:
 
 - A max/min spread ratio that clamped a genuine zero to one, manufacturing precision that was

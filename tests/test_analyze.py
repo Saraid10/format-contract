@@ -247,3 +247,23 @@ class TestStatistics:
 
     def test_cv_single_value_is_none(self) -> None:
         assert _cv([5.0]) is None
+
+
+class TestH6Coverage:
+    def test_partial_vision_coverage_cannot_close_the_claim(self) -> None:
+        videos = [video("a"), video("b"), video("c")]
+        vision = {"a": {"founder_on_camera": False}}
+        assert h6_founders_rarely_on_camera(videos, vision).outcome == INCONCLUSIVE
+
+    def test_full_coverage_closes_and_carries_the_identity_caveat(self) -> None:
+        videos = [video("a"), video("b")]
+        vision = {"a": {"founder_on_camera": True}, "b": {"founder_on_camera": False}}
+        result = h6_founders_rarely_on_camera(videos, vision)
+        assert result.outcome == HELD
+        assert "cannot confirm" in result.evidence["identity_caveat"]
+
+    def test_majority_on_camera_fails(self) -> None:
+        videos = [video(s) for s in "abcde"]
+        vision = {s: {"founder_on_camera": True} for s in "abcd"}
+        vision["e"] = {"founder_on_camera": False}
+        assert h6_founders_rarely_on_camera(videos, vision).outcome == FAILED

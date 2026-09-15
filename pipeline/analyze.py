@@ -287,15 +287,45 @@ def h6_founders_rarely_on_camera(videos: list[dict], vision: dict[str, Any]) -> 
             evidence={"classified": 0, "required": len(videos)},
         )
 
+    if len(vision) < len(videos):
+        return Verdict(
+            id="H6",
+            tier=TIER_B,
+            claim="Founders appear on camera in a minority",
+            outcome=INCONCLUSIVE,
+            detail=(
+                f"Only {len(vision)} of {len(videos)} videos were classified. A partial pass "
+                "cannot close a claim about all seven."
+            ),
+            evidence={"classified": len(vision), "required": len(videos)},
+        )
+
     on_camera = [slug for slug, data in vision.items() if data.get("founder_on_camera")]
     holds = len(on_camera) <= 3
+
     return Verdict(
         id="H6",
         tier=TIER_B,
         claim="Founders appear on camera in a minority",
         outcome=HELD if holds else FAILED,
-        detail=f"{len(on_camera)} of {len(vision)} contain a sustained founder talking-head shot.",
-        evidence={"on_camera": on_camera, "classified": len(vision)},
+        detail=(
+            f"{len(on_camera)} of {len(vision)} contain a sustained shot of a person addressing "
+            "camera. Read this as a talking-head count, not a founder count - see the caveat."
+        ),
+        evidence={
+            "on_camera": on_camera,
+            "classified": len(vision),
+            "sampled_frames_only": True,
+            "identity_caveat": (
+                "A vision model can see that someone is addressing camera; it cannot confirm "
+                "that person is the founder. H6 was written as a claim about founders and is "
+                "answered here by a weaker proxy. Treat it as directional, not settled."
+            ),
+            "detection_caveat": (
+                "Classification runs on frames sampled at cut points, not the full video, so a "
+                "talking-head shot that falls entirely between sampled frames is missed."
+            ),
+        },
     )
 
 
