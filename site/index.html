@@ -460,11 +460,16 @@
     });
     pts.sort(function (a, b) { return a.t - b.t; });
 
-    var W = 900, H = 320, padL = 54, padR = 20, padT = 24, padB = 52;
-    var tMin = pts[0].t, tMax = pts[pts.length - 1].t;
+    // Spaced evenly in chronological order rather than on a true time axis. Two launches share
+    // February 2026, so a real time scale collides their points and their labels - and with
+    // seven points the interval between launches is not what the chart is about.
+    pts.forEach(function (p, i) { p.i = i; });
+
+    var W = 900, H = 340, padL = 56, padR = 56, padT = 34, padB = 56;
+    var n = pts.length;
     var dMax = 200, dMin = 60;
 
-    var x = function (t) { return padL + (tMax === tMin ? 0.5 : (t - tMin) / (tMax - tMin)) * (W - padL - padR); };
+    var x = function (i) { return padL + (n === 1 ? 0.5 : i / (n - 1)) * (W - padL - padR); };
     var y = function (d) { return padT + (1 - (d - dMin) / (dMax - dMin)) * (H - padT - padB); };
 
     var svg = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Launch video runtime over time, showing 2026 clustering tighter than 2025">'];
@@ -485,25 +490,34 @@
       if (group.length < 2) return;
       var ds = group.map(function (p) { return p.d; });
       var lo = Math.min.apply(null, ds), hi = Math.max.apply(null, ds);
-      var xs = group.map(function (p) { return x(p.t); });
-      var x0 = Math.min.apply(null, xs) - 14, x1 = Math.max.apply(null, xs) + 14;
+      var xs = group.map(function (p) { return x(p.i); });
+      var x0 = Math.min.apply(null, xs) - 18, x1 = Math.max.apply(null, xs) + 18;
       var fill = yr === '2026' ? '#4ade80' : '#6b6b70';
       svg.push('<rect x="' + x0 + '" y="' + y(hi) + '" width="' + (x1 - x0) +
                '" height="' + (y(lo) - y(hi)) + '" fill="' + fill + '" fill-opacity="0.09" rx="4"/>');
-      svg.push('<text x="' + ((x0 + x1) / 2) + '" y="' + (y(hi) - 9) +
+      // Keep the band label inside the plot: anchor it to the group's centre but clamp so a
+      // group sitting against either edge does not push its label off the canvas.
+      var cx = Math.min(Math.max((x0 + x1) / 2, padL + 46), W - padR - 46);
+      svg.push('<text x="' + cx + '" y="' + (y(hi) - 11) +
                '" fill="' + fill + '" font-size="11.5" font-family="monospace" text-anchor="middle">' +
                yr + ' spread ' + mmss(hi - lo) + '</text>');
     });
 
     pts.forEach(function (p) {
       var c = p.year === '2026' ? '#4ade80' : '#a3a3a0';
-      svg.push('<circle cx="' + x(p.t) + '" cy="' + y(p.d) + '" r="5.5" fill="' + c + '"/>');
-      svg.push('<text x="' + x(p.t) + '" y="' + (H - padB + 20) +
-               '" fill="#6b6b70" font-size="11" font-family="monospace" text-anchor="middle">' +
-               esc(p.co.length > 11 ? p.co.slice(0, 10) + '…' : p.co) + '</text>');
-      svg.push('<text x="' + x(p.t) + '" y="' + (H - padB + 36) +
-               '" fill="#4a4a4e" font-size="10" font-family="monospace" text-anchor="middle">' +
-               esc(p.date.slice(-4)) + '</text>');
+      var px = x(p.i);
+      // Labels alternate between two baselines so adjacent names cannot collide.
+      var row = (p.i % 2) === 0 ? 0 : 15;
+      svg.push('<circle cx="' + px + '" cy="' + y(p.d) + '" r="5.5" fill="' + c + '"/>');
+      svg.push('<text x="' + px + '" y="' + (y(p.d) - 12) +
+               '" fill="' + c + '" font-size="11" font-family="monospace" text-anchor="middle">' +
+               mmss(p.d) + '</text>');
+      svg.push('<text x="' + px + '" y="' + (H - padB + 20 + row) +
+               '" fill="#8a8a8e" font-size="11" font-family="monospace" text-anchor="middle">' +
+               esc(p.co) + '</text>');
+      svg.push('<text x="' + px + '" y="' + (H - padB + 32 + row) +
+               '" fill="#4a4a4e" font-size="9.5" font-family="monospace" text-anchor="middle">' +
+               esc(p.date) + '</text>');
     });
 
     svg.push('</svg>');
