@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Format Contract</title>
+<meta name="description" content="What nine public Social Capital launches reveal about the container their videos ship in — measured, pre-registered, and reported with the failures.">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --panel: #121214;
+    --line: #232327;
+    --ink: #f2f2f0;
+    --mid: #a3a3a0;
+    --dim: #6b6b70;
+    --held: #4ade80;
+    --failed: #fb7185;
+    --open: #fbbf24;
+    --accent: #e4e4e2;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0;
+  }
+
+  header { padding-block: 72px 48px; border-bottom: 1px solid var(--line); }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 20px;
+  }
+
+  h1 {
+    font-size: clamp(30px, 6vw, 52px);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    margin: 0 0 24px;
+    font-weight: 600;
+  }
+
+  .standfirst {
+    font-size: clamp(17px, 2.4vw, 20px);
+    line-height: 1.55;
+    color: var(--mid);
+    max-width: 62ch;
+    margin: 0 0 28px;
+  }
+
+  .standfirst strong { color: var(--ink); font-weight: 600; }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+
+  section { padding-block: 56px; border-bottom: 1px solid var(--line); }
+
+  h2 {
+    font-size: 13px;
+    font-family: var(--mono);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    font-weight: 500;
+    margin: 0 0 28px;
+  }
+
+  h3 { font-size: 19px; letter-spacing: -0.015em; margin: 0 0 10px; font-weight: 600; }
+
+  p { max-width: 68ch; }
+  .lede { font-size: 17px; color: var(--mid); }
+  .lede strong { color: var(--ink); }
+
+  /* ---- finding callouts ---- */
+  .findings { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+  .finding {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 22px;
+  }
+
+  .finding .num {
+    font-family: var(--mono);
+    font-size: clamp(26px, 4vw, 34px);
+    letter-spacing: -0.03em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .finding .label { font-size: 14px; color: var(--mid); line-height: 1.45; }
+
+  /* ---- scoreboard ---- */
+  .board { display: grid; gap: 10px; }
+
+  .hyp {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .hyp[data-outcome="HELD"] { border-left-color: var(--held); }
+  .hyp[data-outcome="FAILED"] { border-left-color: var(--failed); }
+  .hyp[data-outcome="INCONCLUSIVE"] { border-left-color: var(--open); }
+
+  .hyp-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .hyp-id { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .hyp-claim { font-weight: 600; font-size: 16px; flex: 1 1 260px; }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--dim);
+    white-space: nowrap;
+  }
+
+  .tag.outcome-HELD { color: var(--held); border-color: color-mix(in srgb, var(--held) 35%, transparent); }
+  .tag.outcome-FAILED { color: var(--failed); border-color: color-mix(in srgb, var(--failed) 35%, transparent); }
+  .tag.outcome-INCONCLUSIVE { color: var(--open); border-color: color-mix(in srgb, var(--open) 35%, transparent); }
+
+  .hyp-detail { font-size: 14.5px; color: var(--mid); margin: 0; max-width: none; }
+
+  details.eviden { margin-top: 10px; }
+  details.eviden summary {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    cursor: pointer;
+    letter-spacing: 0.06em;
+  }
+  details.eviden summary:hover { color: var(--mid); }
+  details.eviden pre {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--mid);
+    background: #0d0d0f;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px;
+    overflow-x: auto;
+    margin: 10px 0 0;
+    line-height: 1.5;
+  }
+
+  /* ---- table ---- */
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dim);
+    font-weight: 500;
+  }
+  td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: #0f0f11; }
+  .muted { color: var(--dim); }
+
+  /* ---- video cards ---- */
+  .cards { display: grid; gap: 18px; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .card-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; margin-bottom: 4px; }
+  .card-head .co { font-size: 17px; font-weight: 600; }
+  .card-head .dt { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+
+  .card-stats {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--mid);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-bottom: 14px;
+  }
+
+  .strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; }
+  .strip img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+    background: #1a1a1d;
+    max-width: 100%;
+  }
+
+  .card a { color: var(--mid); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--line); }
+  .card a:hover { color: var(--ink); }
+
+  /* ---- chart ---- */
+  figure { margin: 0; }
+  figcaption { font-size: 13.5px; color: var(--dim); margin-top: 12px; max-width: 64ch; }
+  svg { max-width: 100%; height: auto; display: block; }
+
+  /* ---- limits ---- */
+  ul.limits { padding-left: 18px; max-width: 68ch; }
+  ul.limits li { margin-bottom: 10px; color: var(--mid); font-size: 15px; }
+  ul.limits strong { color: var(--ink); font-weight: 600; }
+
+  footer { padding-block: 40px 64px; font-size: 13.5px; color: var(--dim); }
+  footer a { color: var(--mid); }
+
+  @media (max-width: 560px) {
+    header { padding-block: 48px 36px; }
+    section { padding-block: 40px; }
+    th, td { padding: 9px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Independent analysis · public data only</p>
+    <h1>The interior is bespoke.<br>The container converged.</h1>
+    <p class="standfirst">
+      Social Capital publishes nine launches. Seven shipped with a video. I measured all seven
+      and found <strong>no house style inside the frame</strong> — one is a single unbroken
+      140-second take, another cuts fifty times. But the frame itself barely moves, and the
+      2026 launches sit in a far tighter band than the 2025 ones.
+      <strong>The format looks learned, not imposed.</strong>
+    </p>
+    <div class="meta">
+      <span id="m-launches"></span>
+      <span id="m-videos"></span>
+      <span id="m-generated"></span>
+      <span>n = 7 · no significance claimed</span>
+    </div>
+  </header>
+
+  <section>
+    <h2>What the frame holds constant</h2>
+    <div class="findings" id="findings"></div>
+    <p class="lede" style="margin-top:26px">
+      Every launch video is landscape, carries a real audio track into a feed that autoplays
+      muted, and runs between one and three minutes — several times the length short-form
+      orthodoxy prescribes. Five of seven are cut at 23.976 fps, the cinema standard. Phones
+      capture at 30 or 60; a 24p timeline is a decision somebody made.
+    </p>
+  </section>
+
+  <section>
+    <h2>Predictions, and how they closed</h2>
+    <p class="lede" style="margin-bottom:26px">
+      Nine hypotheses were written and committed to git <strong>before</strong> the measurement
+      code existed. Three were formed after a scouting probe and are labelled confirmatory —
+      they are not evidence of successful prediction. The rest were blind. Two of those failed,
+      and the failures are the most informative results here.
+    </p>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section>
+    <h2>The convergence</h2>
+    <figure>
+      <div id="chart"></div>
+      <figcaption id="chart-caption"></figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Every launch, measured</h2>
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Launch</th><th>Date</th><th>Founder</th>
+            <th>Runtime</th><th>Cuts</th><th>Mean shot</th><th>FPS</th><th>Post</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:20px; font-size:14.5px">
+      Cuts are counted with ffmpeg's scene-change score at a threshold of 0.3. Counts at 0.2
+      and 0.4 are in each hypothesis's evidence — the spread holds at all three, which is what
+      makes it a finding rather than a tuning artifact.
+    </p>
+  </section>
+
+  <section>
+    <h2>Frames at the cuts</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section>
+    <h2>What this does not claim</h2>
+    <ul class="limits">
+      <li><strong>No causal claim.</strong> Nothing here says format drives reach. There is no
+        control group and no counterfactual, so the honest statement is that these are the
+        properties of the videos, not the reason they travelled.</li>
+      <li><strong>No amplifier reconstruction.</strong> Who reposts each launch is the most
+        valuable question and it sits behind the paid X API. Anything I produced without it
+        would be guesswork wearing the costume of measurement.</li>
+      <li><strong>No LinkedIn measurement.</strong> LinkedIn answers unauthenticated requests
+        with HTTP 999. Half the distribution is therefore invisible to this analysis.</li>
+      <li><strong>n = 7.</strong> Seven videos cannot support a significance test, and no
+        p-value appears anywhere in this project. Everything above is descriptive.</li>
+      <li><strong>Scene detection is a proxy for cutting.</strong> A slow dissolve reads as no
+        cut; a hard lighting change can read as one. Counts are reported at three thresholds
+        instead of one so the reader can see how much that matters.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>
+      Built from public pages on sociallcapital.com and the X syndication data those pages
+      already embed. One polite pass, cached to disk, no authentication, no account.
+      Method and pre-registration in the repository.
+    </p>
+    <p id="footer-src"></p>
+  </footer>
+
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  var D = window.DATA;
+  var $ = function (id) { return document.getElementById(id); };
+
+  if (!D) {
+    $('board').innerHTML = '<p class="lede">data.js did not load. Run <code>python -m pipeline</code> to generate it.</p>';
+    return;
+  }
+
+  var esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+
+  var mmss = function (s) {
+    var m = Math.floor(s / 60), r = Math.round(s % 60);
+    if (r === 60) { m += 1; r = 0; }
+    return m + ':' + String(r).padStart(2, '0');
+  };
+
+  // ---- meta -------------------------------------------------------------
+  $('m-launches').textContent = D.counts.launches + ' launches';
+  $('m-videos').textContent = D.counts.with_video + ' with video, ' + D.counts.without_video + ' without';
+  $('m-generated').textContent = 'measured ' + String(D.generated_at).slice(0, 10);
+  $('footer-src').innerHTML = 'Source: <a href="' + esc(D.source) + '">' + esc(D.source) + '</a>';
+
+  var vids = D.videos;
+
+  // ---- headline numbers -------------------------------------------------
+  var cinema = vids.filter(function (v) { return v.is_cinema_fps; }).length;
+  var durations = vids.map(function (v) { return v.duration_s; });
+  var cuts = vids.map(function (v) { return v.cuts; });
+
+  var findings = [
+    { num: vids.filter(function (v) { return v.is_landscape; }).length + '/' + vids.length,
+      label: 'landscape. Not one vertical cut, in a feed era that rewards vertical.' },
+    { num: cinema + '/' + vids.length,
+      label: 'at 23.976 fps — a film timeline, not a 30 or 60 fps capture default.' },
+    { num: mmss(Math.min.apply(null, durations)) + '–' + mmss(Math.max.apply(null, durations)),
+      label: 'runtime. Minutes long, against a short-form playbook that says seconds.' },
+    { num: Math.min.apply(null, cuts) + '–' + Math.max.apply(null, cuts),
+      label: 'cuts. One unbroken take at one end, a dense montage at the other.' }
+  ];
+
+  $('findings').innerHTML = findings.map(function (f) {
+    return '<div class="finding"><span class="num">' + esc(f.num) + '</span>' +
+           '<span class="label">' + esc(f.label) + '</span></div>';
+  }).join('');
+
+  // ---- hypothesis board -------------------------------------------------
+  $('board').innerHTML = D.hypotheses.map(function (h) {
+    return '<div class="hyp" data-outcome="' + esc(h.outcome) + '">' +
+      '<div class="hyp-top">' +
+        '<span class="hyp-id">' + esc(h.id) + '</span>' +
+        '<span class="hyp-claim">' + esc(h.claim) + '</span>' +
+        '<span class="tag">' + esc(h.tier) + '</span>' +
+        '<span class="tag outcome-' + esc(h.outcome) + '">' + esc(h.outcome) + '</span>' +
+      '</div>' +
+      '<p class="hyp-detail">' + esc(h.detail) + '</p>' +
+      '<details class="eviden"><summary>evidence</summary><pre>' +
+        esc(JSON.stringify(h.evidence, null, 2)) +
+      '</pre></details>' +
+    '</div>';
+  }).join('');
+
+  // ---- table ------------------------------------------------------------
+  $('rows').innerHTML = D.launches.map(function (l) {
+    var v = l.video_metrics;
+    var head =
+      '<td>' + esc(l.company || l.slug) + '</td>' +
+      '<td class="num muted">' + esc(l.campaign_date || '') + '</td>' +
+      '<td class="muted">@' + esc(l.founder_handle || '') + '</td>';
+    var tail = '<td class="num muted">' + esc(l.post_chars) + ' ch</td>';
+
+    // A launch that shipped without a video says so once, rather than repeating the same
+    // placeholder across four measurement columns.
+    var body = v
+      ? '<td class="num">' + mmss(v.duration_s) + '</td>' +
+        '<td class="num">' + v.cuts + '</td>' +
+        '<td class="num">' + v.mean_shot_s + 's</td>' +
+        '<td class="num">' + v.fps + '</td>'
+      : '<td class="muted" colspan="4">shipped without a video</td>';
+
+    return '<tr>' + head + body + tail + '</tr>';
+  }).join('');
+
+  // ---- convergence chart ------------------------------------------------
+  (function drawChart() {
+    var pts = vids.filter(function (v) { return v.campaign_date; }).map(function (v) {
+      return { slug: v.slug, co: v.company || v.slug, d: v.duration_s, date: v.campaign_date,
+               year: v.campaign_date.slice(-4) };
+    });
+    if (!pts.length) return;
+
+    var months = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+    pts.forEach(function (p) {
+      var bits = p.date.split(' ');
+      p.t = parseInt(bits[1], 10) * 12 + (months[bits[0]] || 0);
+    });
+    pts.sort(function (a, b) { return a.t - b.t; });
+
+    var W = 900, H = 320, padL = 54, padR = 20, padT = 24, padB = 52;
+    var tMin = pts[0].t, tMax = pts[pts.length - 1].t;
+    var dMax = 200, dMin = 60;
+
+    var x = function (t) { return padL + (tMax === tMin ? 0.5 : (t - tMin) / (tMax - tMin)) * (W - padL - padR); };
+    var y = function (d) { return padT + (1 - (d - dMin) / (dMax - dMin)) * (H - padT - padB); };
+
+    var svg = ['<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Launch video runtime over time, showing 2026 clustering tighter than 2025">'];
+
+    [60, 100, 140, 180].forEach(function (g) {
+      svg.push('<line x1="' + padL + '" y1="' + y(g) + '" x2="' + (W - padR) + '" y2="' + y(g) +
+               '" stroke="#232327" stroke-width="1"/>');
+      svg.push('<text x="' + (padL - 10) + '" y="' + (y(g) + 4) +
+               '" fill="#6b6b70" font-size="12" font-family="monospace" text-anchor="end">' +
+               mmss(g) + '</text>');
+    });
+
+    var byYear = { '2025': pts.filter(function (p) { return p.year === '2025'; }),
+                   '2026': pts.filter(function (p) { return p.year === '2026'; }) };
+
+    Object.keys(byYear).forEach(function (yr) {
+      var group = byYear[yr];
+      if (group.length < 2) return;
+      var ds = group.map(function (p) { return p.d; });
+      var lo = Math.min.apply(null, ds), hi = Math.max.apply(null, ds);
+      var xs = group.map(function (p) { return x(p.t); });
+      var x0 = Math.min.apply(null, xs) - 14, x1 = Math.max.apply(null, xs) + 14;
+      var fill = yr === '2026' ? '#4ade80' : '#6b6b70';
+      svg.push('<rect x="' + x0 + '" y="' + y(hi) + '" width="' + (x1 - x0) +
+               '" height="' + (y(lo) - y(hi)) + '" fill="' + fill + '" fill-opacity="0.09" rx="4"/>');
+      svg.push('<text x="' + ((x0 + x1) / 2) + '" y="' + (y(hi) - 9) +
+               '" fill="' + fill + '" font-size="11.5" font-family="monospace" text-anchor="middle">' +
+               yr + ' spread ' + mmss(hi - lo) + '</text>');
+    });
+
+    pts.forEach(function (p) {
+      var c = p.year === '2026' ? '#4ade80' : '#a3a3a0';
+      svg.push('<circle cx="' + x(p.t) + '" cy="' + y(p.d) + '" r="5.5" fill="' + c + '"/>');
+      svg.push('<text x="' + x(p.t) + '" y="' + (H - padB + 20) +
+               '" fill="#6b6b70" font-size="11" font-family="monospace" text-anchor="middle">' +
+               esc(p.co.length > 11 ? p.co.slice(0, 10) + '…' : p.co) + '</text>');
+      svg.push('<text x="' + x(p.t) + '" y="' + (H - padB + 36) +
+               '" fill="#4a4a4e" font-size="10" font-family="monospace" text-anchor="middle">' +
+               esc(p.date.slice(-4)) + '</text>');
+    });
+
+    svg.push('</svg>');
+    $('chart').innerHTML = svg.join('');
+
+    var h9 = D.hypotheses.filter(function (h) { return h.id === 'H9'; })[0];
+    $('chart-caption').textContent = h9
+      ? 'H9 predicted the spread would not collapse. It did. ' + h9.detail +
+        ' A tightening band is what a format being found looks like, rather than one applied from the start — and with four points against three, this is the most fragile result on the page.'
+      : '';
+  })();
+
+  // ---- frame strips -----------------------------------------------------
+  $('cards').innerHTML = vids.map(function (v) {
+    var l = D.launches.filter(function (x) { return x.slug === v.slug; })[0] || {};
+    var strip = (v.frames || []).map(function (f) {
+      return '<img src="frames/' + esc(f) + '" alt="Frame from the ' + esc(v.company) +
+             ' launch video" loading="lazy" decoding="async">';
+    }).join('');
+    return '<div class="card">' +
+      '<div class="card-head"><span class="co">' + esc(v.company || v.slug) + '</span>' +
+      '<span class="dt">' + esc(v.campaign_date || '') + '</span></div>' +
+      '<div class="card-stats">' +
+        '<span>' + mmss(v.duration_s) + '</span>' +
+        '<span>' + v.cuts + ' cuts</span>' +
+        '<span>' + v.mean_shot_s + 's mean shot</span>' +
+        '<span>' + v.fps + ' fps</span>' +
+        '<span>' + v.width + '×' + v.height + '</span>' +
+      '</div>' +
+      '<div class="strip">' + strip + '</div>' +
+      (l.post_url ? '<p style="margin:14px 0 0"><a href="' + esc(l.post_url) +
+        '" rel="noopener">hero post →</a></p>' : '') +
+    '</div>';
+  }).join('');
+})();
+</script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-{
+window.DATA = {
   "generated_at": "2026-09-15T18:51:21.694586+00:00",
   "source": "https://www.sociallcapital.com/work",
   "counts": {
@@ -1247,4 +1247,4 @@
       }
     }
   ]
-}
+};

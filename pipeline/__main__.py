@@ -116,7 +116,12 @@ def main() -> None:
     }
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    serialised = json.dumps(payload, indent=2)
+    OUT.write_text(serialised, encoding="utf-8")
+
+    # Also emitted as a JS global so the page renders when opened straight off disk, where a
+    # fetch() of data.json is blocked by the file:// origin.
+    OUT.with_suffix(".js").write_text(f"window.DATA = {serialised};\n", encoding="utf-8")
 
     print(f"\nwrote {OUT.relative_to(ROOT)}")
     for verdict in verdicts:
