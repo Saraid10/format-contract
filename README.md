@@ -70,9 +70,9 @@ python -m http.server 8777 --directory site
 
 ## GitHub Pages
 
-Pushing to `main` deploys the checked-in static artifact in `site/` through the GitHub Pages
-workflow. It deliberately does **not** refetch public pages during deployment: the visible
-result stays tied to the cached source snapshot committed with it.
+GitHub Pages opens the checked-in static artifact in `site/`. It deliberately does **not**
+refetch public pages during deployment: the visible result stays tied to the cached source
+snapshot committed with it.
 
 ## Tests
 
