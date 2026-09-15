@@ -72,6 +72,9 @@ class TestShotLengths:
     def test_mean_shot_never_divides_by_zero(self) -> None:
         assert make(duration=50.0, cut_times=[]).mean_shot_s == 50.0
 
+    def test_mean_shot_counts_cuts_plus_one_shots(self) -> None:
+        assert make(duration=100.0, cut_times=[50.0]).mean_shot_s == 50.0
+
 
 class TestRates:
     def test_cuts_per_minute(self) -> None:
@@ -117,4 +120,4 @@ def test_to_dict_carries_derived_fields() -> None:
     assert data["is_landscape"] is True
     assert data["is_cinema_fps"] is True
     assert data["cuts"] == 1
-    assert data["mean_shot_s"] == 100.0
+    assert data["mean_shot_s"] == 50.0

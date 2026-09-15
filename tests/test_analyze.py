@@ -51,12 +51,12 @@ def video(slug: str, **kwargs) -> dict:
 
 
 class TestH1:
-    def test_wide_spread_holds(self) -> None:
+    def test_zero_cut_count_makes_the_registered_ratio_inconclusive(self) -> None:
         videos = [
             video("a", cut_counts={"0.2": 54, "0.3": 50, "0.4": 36}),
             video("b", cut_counts={"0.2": 3, "0.3": 0, "0.4": 0}),
         ]
-        assert h1_no_cut_template(videos).outcome == HELD
+        assert h1_no_cut_template(videos).outcome == INCONCLUSIVE
 
     def test_uniform_cutting_fails(self) -> None:
         videos = [
@@ -65,15 +65,15 @@ class TestH1:
         ]
         assert h1_no_cut_template(videos).outcome == FAILED
 
-    def test_zero_min_does_not_produce_a_ratio(self) -> None:
-        """A clamped max/min would manufacture false precision. It must not appear."""
+    def test_zero_min_does_not_replace_the_registered_ratio_with_a_gap(self) -> None:
+        """A clamped ratio or a post-hoc gap would manufacture a verdict."""
         videos = [
             video("a", cut_counts={"0.2": 54, "0.3": 50, "0.4": 36}),
             video("b", cut_counts={"0.2": 3, "0.3": 0, "0.4": 0}),
         ]
         evidence = h1_no_cut_template(videos).evidence
-        assert "max_min_ratio_by_threshold" not in evidence
-        assert evidence["spread_by_threshold"]["0.3"]["min"] == 0
+        assert evidence["undefined_ratio_thresholds"] == ["0.3", "0.4"]
+        assert "0.3" not in evidence["pre_registered_ratio_by_threshold"]
 
 
 class TestH2:
@@ -197,13 +197,14 @@ class TestH7:
 class TestH8:
     def test_majority_over_fold_holds(self) -> None:
         launches = [
-            {"slug": s, "exceeds_fold": True, "post_chars": 300} for s in "abcde"
+            {"slug": s, "exceeds_fold": True, "post_chars": 300, "video_metrics": {}}
+            for s in "abcde"
         ]
         assert h8_copy_exceeds_fold(launches).outcome == HELD
 
     def test_evidence_discloses_the_preregistration_mismatch(self) -> None:
-        launches = [{"slug": "a", "exceeds_fold": True, "post_chars": 300}]
-        assert "conflating" in h8_copy_exceeds_fold(launches).evidence["note"]
+        launches = [{"slug": "a", "exceeds_fold": True, "post_chars": 300, "video_metrics": {}}]
+        assert "original 5/7 denominator" in h8_copy_exceeds_fold(launches).evidence["note"]
 
 
 class TestH9:

@@ -73,12 +73,11 @@ def _cv(values: list[float]) -> float | None:
 
 
 def h1_no_cut_template(videos: list[dict]) -> Verdict:
-    """Spread is measured as a gap, not a ratio.
+    """Evaluate H1 exactly as it was written before video measurement.
 
-    One video has zero detected cuts, which makes max/min undefined. Clamping the denominator
-    to 1 would manufacture a ratio that reads as precision and is not. The claim is tested as
-    an absolute gap instead, plus the requirement that the ordering of videos is the same at
-    every threshold - that is what rules out a tuning artifact.
+    H1's original max/min rule becomes undefined if a threshold yields a zero cut count.
+    A gap is still useful descriptive context, but it must not silently replace the original
+    decision rule or turn an untestable ratio into a HELD result.
     """
     spread: dict[str, dict[str, int]] = {}
     orderings: list[tuple[str, ...]] = []
@@ -92,39 +91,43 @@ def h1_no_cut_template(videos: list[dict]) -> Verdict:
         }
         orderings.append(tuple(sorted(counts, key=lambda s: counts[s])))
 
-    wide_at_every_threshold = all(s["gap"] >= 20 for s in spread.values())
     rank_stable = len(set(orderings)) == 1
+    undefined = [threshold for threshold, values in spread.items() if values["min"] == 0]
+    ratios = {
+        threshold: values["max"] / values["min"]
+        for threshold, values in spread.items()
+        if values["min"] > 0
+    }
 
-    # A near-stable ordering still supports the claim; report which it was rather than hiding it.
-    holds = wide_at_every_threshold
+    if undefined:
+        outcome = INCONCLUSIVE
+        detail = (
+            "H1's pre-registered max/min rule is undefined at "
+            f"threshold(s) {', '.join(undefined)} because a video has zero detected cuts. "
+            "The large gaps are reported as descriptive evidence, not a substitute verdict."
+        )
+    else:
+        holds = all(ratio > 10 for ratio in ratios.values())
+        outcome = HELD if holds else FAILED
+        detail = (
+            "The pre-registered max/min ratio exceeds 10 at every detection threshold."
+            if holds
+            else "The pre-registered max/min ratio does not exceed 10 at every threshold."
+        )
 
     return Verdict(
         id="H1",
         tier=TIER_A,
         claim="There is no house cut-rate template",
-        outcome=HELD if holds else FAILED,
-        detail=(
-            (
-                "Cut counts span a gap of at least 20 at every detection threshold. "
-                + (
-                    "The ranking of videos is identical at all three thresholds, so the spread "
-                    "is not an artifact of one tuning choice."
-                    if rank_stable
-                    else "The ranking shifts slightly between thresholds, but the extremes hold "
-                    "at all three."
-                )
-            )
-            if holds
-            else "The spread narrows at one or more thresholds."
-        ),
+        outcome=outcome,
+        detail=detail,
         evidence={
             "spread_by_threshold": spread,
             "cuts_at_0.3": {v["slug"]: v["cut_counts"].get("0.3", 0) for v in videos},
             "rank_stable_across_thresholds": rank_stable,
-            "ratio_note": (
-                "max/min is deliberately not reported: one video has zero detected cuts, which "
-                "makes the ratio undefined."
-            ),
+            "pre_registered_ratio_by_threshold": ratios,
+            "undefined_ratio_thresholds": undefined,
+            "descriptive_gap_note": "Absolute gaps are descriptive context only; H1 was registered as a ratio.",
         },
     )
 
@@ -165,11 +168,11 @@ def h3_cinema_fps(videos: list[dict]) -> Verdict:
     return Verdict(
         id="H3",
         tier=TIER_A,
-        claim="The frame rate is a deliberate cinema choice",
+        claim="A majority use a 24p delivery rate",
         outcome=HELD if holds else FAILED,
         detail=(
-            f"{len(cinema)} of {len(videos)} run at a 24p film rate rather than a "
-            "30/60 capture default."
+            f"{len(cinema)} of {len(videos)} have a 23.976/24 fps delivery rate. "
+            "This records the exported media property; it does not establish the production process."
         ),
         evidence={
             "cinema_fps": cinema,
@@ -360,7 +363,13 @@ def h7_runtime_not_engagement(videos: list[dict]) -> Verdict:
 
 
 def h8_copy_exceeds_fold(launches: list[dict]) -> Verdict:
-    over = [l["slug"] for l in launches if l["exceeds_fold"]]
+    # H8 was registered as 5/7—the seven launches that shipped with a video.  Retain that
+    # denominator for its verdict, while exposing the full wall as an exploratory comparison.
+    video_launches = [l for l in launches if l.get("video_metrics") is not None]
+    if not video_launches:  # Makes the helper usable with minimal synthetic fixtures.
+        video_launches = launches
+    over = [l["slug"] for l in video_launches if l["exceeds_fold"]]
+    all_over = [l["slug"] for l in launches if l["exceeds_fold"]]
     lengths = {l["slug"]: l["post_chars"] for l in launches}
     holds = len(over) >= 5
 
@@ -370,18 +379,18 @@ def h8_copy_exceeds_fold(launches: list[dict]) -> Verdict:
         claim="Post copy is longer than the fold",
         outcome=HELD if holds else FAILED,
         detail=(
-            f"{len(over)} of {len(launches)} hero posts run past the 280-character fold. "
-            f"All {len(launches)} land in a {max(lengths.values()) - min(lengths.values())}-"
-            "character band."
+            f"{len(over)} of {len(video_launches)} video-launch hero posts pass the original "
+            "5/7, 280-character threshold. "
+            f"Exploratory full-wall count: {len(all_over)} of {len(launches)}."
         ),
         evidence={
-            "over_fold": over,
+            "over_fold_video_launches": over,
+            "over_fold_all_launches": all_over,
             "post_chars": lengths,
             "band": [min(lengths.values()), max(lengths.values())],
             "note": (
-                "Pre-registration wrote the bound as '5/7', conflating launches-with-video (7) "
-                "with hero posts (9). Evaluated here against all 9 posts, which is the "
-                "population the claim is about. Stated rather than silently corrected."
+                "The original 5/7 denominator is used for the verdict. The 9-post count is "
+                "reported separately as exploratory context."
             ),
         },
     )
@@ -395,7 +404,7 @@ def h9_format_stable_not_converging(videos: list[dict]) -> Verdict:
         return Verdict(
             id="H9",
             tier=TIER_B,
-            claim="The format is stable over time, not converging",
+            claim="Launch runtime is stable over time, not converging",
             outcome=INCONCLUSIVE,
             detail=f"Cohorts too small to compare spread: {len(early)} in 2025, {len(late)} in 2026.",
             evidence={"n_2025": len(early), "n_2026": len(late)},
@@ -422,7 +431,7 @@ def h9_format_stable_not_converging(videos: list[dict]) -> Verdict:
     return Verdict(
         id="H9",
         tier=TIER_B,
-        claim="The format is stable over time, not converging",
+        claim="Launch runtime is stable over time, not converging",
         outcome=outcome,
         detail=detail,
         evidence={

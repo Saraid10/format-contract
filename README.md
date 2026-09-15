@@ -9,11 +9,12 @@ product.
 
 This measures the creative instead, because it is the part that leaves public artifacts.
 
-**The finding: there is no house style inside the frame, and the frame itself barely moves.**
-Cut counts run 0 to 50 across seven videos of similar length. Every one is 16:9 landscape with
-a real audio track, running one to three minutes, and five of seven are cut at 23.976 fps —
-the cinema rate, not a phone's 30 or 60. And the 2026 launches cluster far tighter than the
-2025 ones, which means the format was converged on rather than imposed.
+**The finding: the public launch assets vary inside the frame, while runtime narrows over time.**
+At the reporting threshold, detected cut counts run 0 to 50 across seven videos of similar
+length. Every one is 16:9 landscape with a real audio track and runs one to three minutes.
+Five of seven have a 23.976 fps delivery rate. The three 2026 launch videos sit in a tighter
+runtime band than the four from 2025—a descriptive signal that the delivery format may have
+been learned rather than imposed.
 
 Full outcomes in [`RESULTS.md`](RESULTS.md). Predictions in
 [`HYPOTHESES.md`](HYPOTHESES.md), committed before the measurement code existed.
@@ -29,16 +30,17 @@ successful prediction, and the site says so where it shows them.
 
 Two blind predictions failed. Both failures are on the page, one of them as the headline.
 
-**5 held · 2 failed · 2 unresolved for want of a credential.**
+**4 held · 2 failed · 3 inconclusive.**
 
-The two unresolved hypotheses need speech-to-text and a vision model. Rather than quietly
-dropping them, they report as `INCONCLUSIVE` with the reason. Both measurements are
-implemented — see *Running it* — and close when a key is supplied.
+Two hypotheses need speech-to-text and a vision model. A third (H1) is inconclusive because
+its pre-registered max/min ratio is undefined when a video has zero detected cuts. Rather than
+quietly replacing the rule with a different test, the site reports the observed gaps as
+descriptive context and leaves the original verdict open.
 
 ## Running it
 
 ```bash
-pip install imageio-ffmpeg pytest
+pip install -r requirements.txt
 python -m pipeline
 ```
 
@@ -66,19 +68,26 @@ python -m http.server 8777 --directory site
 `site/index.html` also opens straight off disk — the pipeline emits the data as both
 `data.json` and a `data.js` global, so a `file://` origin does not leave you with a blank page.
 
+## GitHub Pages
+
+Pushing to `main` deploys the checked-in static artifact in `site/` through the GitHub Pages
+workflow. It deliberately does **not** refetch public pages during deployment: the visible
+result stays tied to the cached source snapshot committed with it.
+
 ## Tests
 
 ```bash
 python -m pytest
 ```
 
-82 tests over the parsers, the metric arithmetic, and every hypothesis verdict. They exist
-because two of them caught real bugs:
+83 collected test cases cover the parsers, metric arithmetic, and every hypothesis verdict.
+They caught real bugs:
 
-- A max/min spread ratio that clamped a genuine zero to one, manufacturing precision that was
-  not in the data.
+- A max/min spread ratio that clamped a genuine zero to one. The original ratio now remains
+  inconclusive rather than being replaced by a post-hoc cutoff.
 - A front-loading comparison that let a floating-point tie-break file a video with no cuts
   under "cuts faster at the open."
+- A mean-shot calculation that counted cuts rather than the cuts-plus-one shots they create.
 
 Both are pinned by name in `tests/test_analyze.py`.
 
@@ -107,7 +116,7 @@ pipeline/
   analyze.py       close each hypothesis, with its evidence
   __main__.py      orchestration -> site/data.json
 site/              static page; no server, no build step, no dependencies
-tests/             82 tests
+tests/             83 collected test cases
 ```
 
 ## What this does not claim

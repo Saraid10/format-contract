@@ -3,52 +3,60 @@
 Outcomes against [`HYPOTHESES.md`](HYPOTHESES.md), which was committed before the measurement
 code existed. Nothing in the pre-registration was edited after these landed.
 
-**5 held · 2 failed · 2 unresolved.**
+**4 held · 2 failed · 3 inconclusive.**
 
 | | Hypothesis | Tier | Outcome |
 |---|---|---|---|
-| H1 | There is no house cut-rate template | confirmatory | **HELD** |
+| H1 | There is no house cut-rate template | confirmatory | *inconclusive* |
 | H2 | The container is fixed even though the interior is not | confirmatory | **HELD** |
-| H3 | The frame rate is a deliberate cinema choice | confirmatory | **HELD** |
+| H3 | A majority use a 24p delivery rate | confirmatory | **HELD** |
 | H4 | The opening three seconds carry no spoken product name | pre-registered | *inconclusive* |
 | H5 | Shot length is front-loaded | pre-registered | **FAILED** |
 | H6 | Founders appear on camera in a minority | pre-registered | *inconclusive* |
 | H7 | Runtime does not track engagement | pre-registered | **HELD** |
 | H8 | Post copy is longer than the fold | pre-registered | **HELD** |
-| H9 | The format is stable over time, not converging | pre-registered | **FAILED** |
+| H9 | Launch runtime is stable over time, not converging | pre-registered | **FAILED** |
 
 ---
 
 ## The headline
 
-**Inside the frame there is no house style. The frame itself barely moves.**
+**The public launch assets vary inside the frame. Their runtimes narrowed over time.**
 
-Cut counts run from 0 to 50 across seven videos of comparable length. Cartesia's is a single
-unbroken 140-second take; Wispr Flow's cuts fifty times in 157 seconds. Whatever Social Capital
-standardises, it is not pacing, shot grammar, or edit density.
+At the reporting threshold, detected cut counts run from 0 to 50 across seven videos of
+comparable length. Cartesia has no detected scene changes; Wispr Flow has fifty in 157 seconds.
+That is useful descriptive evidence of radically different pacing and edit density, but H1 is
+not counted as a pre-registered success: its original max/min rule is undefined when the
+denominator is zero.
 
 What does hold for all seven: 16:9 landscape, a real audio track, 60–200 seconds of runtime.
-Five of seven sit at 23.976 fps — the cinema rate. A phone captures at 30 or 60; a 24p timeline
-is something a person chose in an edit suite.
+Five of seven have a 23.976 fps delivery rate. That is an observable media property, not proof
+of how the video was shot or edited; the 25 fps and 30 fps exceptions are not evidence of lesser
+craft.
 
 That combination runs against the short-form playbook in every direction at once. Landscape,
 not vertical. Minutes, not seconds. Sound-on, into feeds that autoplay muted.
 
 ## The most useful result is a failed prediction
 
-**H9 failed, and its failure is the finding.**
+**H9 failed, and its failure is a useful descriptive signal.**
 
 H9 predicted the format was fixed from the start. It was not. Runtime spread across the four
 2025 launches has a coefficient of variation of 0.29; across the three 2026 launches, 0.07.
 The 2025 videos run 1:29 to 2:54. The 2026 videos run 2:37 to 3:02.
 
-The container was **converged on**, not imposed. That is what a format being *found* looks
-like — and it means the interesting question is not "what is the template" but "what were they
-optimising toward between February 2025 and March 2026."
+Runtime appears to have **converged on** a narrower band rather than being fixed at the start.
+That is not proof of an optimisation process. It does make the useful next question: what were
+they optimising toward between February 2025 and March 2026?
 
 This is also the most fragile result on the page: four points against three, and a coefficient
 of variation over three observations moves a long way on one video. It is reported because it
 was predicted and it failed, not because the evidence is strong.
+
+**Erratum to the pre-registration:** H9 says "four launches from 2026" and "three from 2025."
+The public wall contains four video launches in 2025 and three in 2026. The immutable
+pre-registration remains as written; the evaluation uses the actual chronological cohorts and
+records their sizes in the evidence.
 
 ## H5 failed on its own bound
 
@@ -64,18 +72,22 @@ faster at the open." A test now pins that behaviour
 
 Reporting this as HELD by quietly counting a coin-flip would have been easy and wrong.
 
-## Two hypotheses stayed open
+## Three hypotheses stayed open
 
 H4 and H6 need speech-to-text and a vision model respectively. No credential was available for
 this run. Both measurements are implemented and will close when a key is present; neither is
 reported as HELD, and neither was dropped from the list to make the scoreboard tidier.
 
-## A disclosure about H8's bound
+H1 is also inconclusive. Its registered decision rule required `max(cuts) / min(cuts) > 10` at
+every threshold. Zero detected cuts at two thresholds makes that ratio undefined. The result
+reports absolute gaps as descriptive evidence rather than changing the criterion after seeing
+the measurement.
 
-H8's pre-registration wrote the threshold as "5/7", conflating *launches with video* (7) with
-*hero posts* (9). Every launch has a post; only seven have a video. It is evaluated here
-against all nine posts, which is the population the claim was actually about. Noting the slip
-rather than silently correcting it.
+## H8 uses its original denominator
+
+H8's registered threshold was 5/7. It is evaluated against the seven video-launch hero posts,
+where it holds at 7/7. The full wall is shown separately as exploratory context: 8/9 posts
+exceed the fold.
 
 The result: 8 of 9 hero posts exceed X's 280-character fold, and all nine land inside a
 44-character band — 266 to 310. Nine posts, nine founders, nine companies, and a 44-character

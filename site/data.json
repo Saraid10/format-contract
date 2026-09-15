@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-15T20:01:46.732313+00:00",
+  "generated_at": "2026-09-15T20:29:00.856178+00:00",
   "source": "https://www.sociallcapital.com/work",
   "counts": {
     "launches": 9,
@@ -89,7 +89,7 @@
         "is_cinema_fps": true,
         "cuts": 24,
         "cuts_per_minute": 8.34,
-        "mean_shot_s": 7.2,
+        "mean_shot_s": 6.91,
         "slug": "playerzero",
         "company": "PlayerZero",
         "campaign_date": "Mar 2026",
@@ -208,7 +208,7 @@
         "is_cinema_fps": true,
         "cuts": 50,
         "cuts_per_minute": 19.11,
-        "mean_shot_s": 3.14,
+        "mean_shot_s": 3.08,
         "slug": "wispr-flow",
         "company": "Wispr Flow",
         "campaign_date": "Feb 2026",
@@ -290,7 +290,7 @@
         "is_cinema_fps": false,
         "cuts": 12,
         "cuts_per_minute": 3.95,
-        "mean_shot_s": 15.2,
+        "mean_shot_s": 14.03,
         "slug": "poly-ai",
         "company": "Poly AI",
         "campaign_date": "Feb 2026",
@@ -394,7 +394,7 @@
         "is_cinema_fps": true,
         "cuts": 18,
         "cuts_per_minute": 9.69,
-        "mean_shot_s": 6.19,
+        "mean_shot_s": 5.87,
         "slug": "gamma",
         "company": "Gamma",
         "campaign_date": "Nov 2025",
@@ -549,7 +549,7 @@
         "is_cinema_fps": true,
         "cuts": 2,
         "cuts_per_minute": 0.69,
-        "mean_shot_s": 87.09,
+        "mean_shot_s": 58.06,
         "slug": "superblocks",
         "company": "Superblocks",
         "campaign_date": "May 2025",
@@ -627,7 +627,7 @@
         "is_cinema_fps": true,
         "cuts": 13,
         "cuts_per_minute": 8.78,
-        "mean_shot_s": 6.83,
+        "mean_shot_s": 6.34,
         "slug": "icon",
         "company": "Icon",
         "campaign_date": "Feb 2025",
@@ -692,7 +692,7 @@
       "is_cinema_fps": true,
       "cuts": 24,
       "cuts_per_minute": 8.34,
-      "mean_shot_s": 7.2,
+      "mean_shot_s": 6.91,
       "slug": "playerzero",
       "company": "PlayerZero",
       "campaign_date": "Mar 2026",
@@ -780,7 +780,7 @@
       "is_cinema_fps": true,
       "cuts": 50,
       "cuts_per_minute": 19.11,
-      "mean_shot_s": 3.14,
+      "mean_shot_s": 3.08,
       "slug": "wispr-flow",
       "company": "Wispr Flow",
       "campaign_date": "Feb 2026",
@@ -830,7 +830,7 @@
       "is_cinema_fps": false,
       "cuts": 12,
       "cuts_per_minute": 3.95,
-      "mean_shot_s": 15.2,
+      "mean_shot_s": 14.03,
       "slug": "poly-ai",
       "company": "Poly AI",
       "campaign_date": "Feb 2026",
@@ -886,7 +886,7 @@
       "is_cinema_fps": true,
       "cuts": 18,
       "cuts_per_minute": 9.69,
-      "mean_shot_s": 6.19,
+      "mean_shot_s": 5.87,
       "slug": "gamma",
       "company": "Gamma",
       "campaign_date": "Nov 2025",
@@ -963,7 +963,7 @@
       "is_cinema_fps": true,
       "cuts": 2,
       "cuts_per_minute": 0.69,
-      "mean_shot_s": 87.09,
+      "mean_shot_s": 58.06,
       "slug": "superblocks",
       "company": "Superblocks",
       "campaign_date": "May 2025",
@@ -1010,7 +1010,7 @@
       "is_cinema_fps": true,
       "cuts": 13,
       "cuts_per_minute": 8.78,
-      "mean_shot_s": 6.83,
+      "mean_shot_s": 6.34,
       "slug": "icon",
       "company": "Icon",
       "campaign_date": "Feb 2025",
@@ -1034,8 +1034,8 @@
       "id": "H1",
       "tier": "confirmatory",
       "claim": "There is no house cut-rate template",
-      "outcome": "HELD",
-      "detail": "Cut counts span a gap of at least 20 at every detection threshold. The ranking shifts slightly between thresholds, but the extremes hold at all three.",
+      "outcome": "INCONCLUSIVE",
+      "detail": "H1's pre-registered max/min rule is undefined at threshold(s) 0.3, 0.4 because a video has zero detected cuts. The large gaps are reported as descriptive evidence, not a substitute verdict.",
       "evidence": {
         "spread_by_threshold": {
           "0.2": {
@@ -1064,7 +1064,14 @@
           "icon": 13
         },
         "rank_stable_across_thresholds": false,
-        "ratio_note": "max/min is deliberately not reported: one video has zero detected cuts, which makes the ratio undefined."
+        "pre_registered_ratio_by_threshold": {
+          "0.2": 18.0
+        },
+        "undefined_ratio_thresholds": [
+          "0.3",
+          "0.4"
+        ],
+        "descriptive_gap_note": "Absolute gaps are descriptive context only; H1 was registered as a ratio."
       }
     },
     {
@@ -1096,9 +1103,9 @@
     {
       "id": "H3",
       "tier": "confirmatory",
-      "claim": "The frame rate is a deliberate cinema choice",
+      "claim": "A majority use a 24p delivery rate",
       "outcome": "HELD",
-      "detail": "5 of 7 run at a 24p film rate rather than a 30/60 capture default.",
+      "detail": "5 of 7 have a 23.976/24 fps delivery rate. This records the exported media property; it does not establish the production process.",
       "evidence": {
         "cinema_fps": [
           "playerzero",
@@ -1203,9 +1210,18 @@
       "tier": "pre-registered",
       "claim": "Post copy is longer than the fold",
       "outcome": "HELD",
-      "detail": "8 of 9 hero posts run past the 280-character fold. All 9 land in a 44-character band.",
+      "detail": "7 of 7 video-launch hero posts pass the original 5/7, 280-character threshold. Exploratory full-wall count: 8 of 9.",
       "evidence": {
-        "over_fold": [
+        "over_fold_video_launches": [
+          "playerzero",
+          "wispr-flow",
+          "poly-ai",
+          "gamma",
+          "cartesia",
+          "superblocks",
+          "icon"
+        ],
+        "over_fold_all_launches": [
           "playerzero",
           "wispr-flow",
           "poly-ai",
@@ -1230,13 +1246,13 @@
           266,
           310
         ],
-        "note": "Pre-registration wrote the bound as '5/7', conflating launches-with-video (7) with hero posts (9). Evaluated here against all 9 posts, which is the population the claim is about. Stated rather than silently corrected."
+        "note": "The original 5/7 denominator is used for the verdict. The 9-post count is reported separately as exploratory context."
       }
     },
     {
       "id": "H9",
       "tier": "pre-registered",
-      "claim": "The format is stable over time, not converging",
+      "claim": "Launch runtime is stable over time, not converging",
       "outcome": "FAILED",
       "detail": "2026 duration spread (CV 0.07) is less than half 2025's (0.29) - the format looks learned rather than imposed.",
       "evidence": {

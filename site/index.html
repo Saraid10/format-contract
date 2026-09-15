@@ -255,13 +255,13 @@
 
   <header>
     <p class="eyebrow">Independent analysis · public data only</p>
-    <h1>The interior is bespoke.<br>The container converged.</h1>
+    <h1>The interior varies.<br>Runtime narrowed.</h1>
     <p class="standfirst">
       Social Capital publishes nine launches. Seven shipped with a video. I measured all seven
-      and found <strong>no house style inside the frame</strong> — one is a single unbroken
-      140-second take, another cuts fifty times. But the frame itself barely moves, and the
-      2026 launches sit in a far tighter band than the 2025 ones.
-      <strong>The format looks learned, not imposed.</strong>
+      and found radically different pacing inside the frame — one has no detected scene changes
+      at the reporting threshold, another has fifty. The published 2026 launch videos do sit in
+      a far tighter runtime band than the 2025 ones. <strong>That is a descriptive signal, not
+      proof of a production rule.</strong>
     </p>
     <div class="meta">
       <span id="m-launches"></span>
@@ -275,10 +275,9 @@
     <h2>What the frame holds constant</h2>
     <div class="findings" id="findings"></div>
     <p class="lede" style="margin-top:26px">
-      Every launch video is landscape, carries a real audio track into a feed that autoplays
-      muted, and runs between one and three minutes — several times the length short-form
-      orthodoxy prescribes. Five of seven are cut at 23.976 fps, the cinema standard. Phones
-      capture at 30 or 60; a 24p timeline is a decision somebody made.
+      Every launch video is landscape, carries a real audio track, and runs between one and
+      three minutes. Five of seven have a 23.976 fps delivery rate. That records an exported
+      media property; it does not establish how the work was shot or edited.
     </p>
   </section>
 
@@ -294,7 +293,7 @@
   </section>
 
   <section>
-    <h2>The convergence</h2>
+    <h2>The runtime convergence</h2>
     <figure>
       <div id="chart"></div>
       <figcaption id="chart-caption"></figcaption>
@@ -396,9 +395,9 @@
     { num: vids.filter(function (v) { return v.is_landscape; }).length + '/' + vids.length,
       label: 'landscape. Not one vertical cut, in a feed era that rewards vertical.' },
     { num: cinema + '/' + vids.length,
-      label: 'at 23.976 fps — a film timeline, not a 30 or 60 fps capture default.' },
+      label: 'at 23.976 fps delivery rate. This is metadata, not production-process evidence.' },
     { num: mmss(Math.min.apply(null, durations)) + '–' + mmss(Math.max.apply(null, durations)),
-      label: 'runtime. Minutes long, against a short-form playbook that says seconds.' },
+      label: 'runtime across this curated public sample.' },
     { num: Math.min.apply(null, cuts) + '–' + Math.max.apply(null, cuts),
       label: 'cuts. One unbroken take at one end, a dense montage at the other.' }
   ];

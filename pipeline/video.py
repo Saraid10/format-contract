@@ -72,7 +72,14 @@ class VideoMetrics:
 
     @property
     def mean_shot_s(self) -> float:
-        return self.duration_s / max(self.cuts, 1)
+        """Mean duration of the detected shots.
+
+        A sequence with ``n`` cuts has ``n + 1`` shots.  Deriving the value from
+        ``shot_lengths`` also keeps the reported metric consistent with the
+        boundary and duplicate-cut handling used elsewhere in this module.
+        """
+        shots = self.shot_lengths()
+        return sum(shots) / len(shots) if shots else 0.0
 
     def shot_lengths(self) -> list[float]:
         """Gaps between consecutive cuts, bookended by the start and end of the video."""
